@@ -19,7 +19,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
     """Default location of the data to be processed - first sheet of Excel workbook"""
 
     sheet = wb.worksheets[data_workbook_num]
-    print('Xlsx data read completed\n')
+    print('xlsx data read completed\n')
 
     row_num = sheet.max_row
     col_num = sheet.max_column
@@ -34,9 +34,13 @@ def process_xlsx(data_open_path, data_workbook_num=0):
 
     for r_num in range(1, row_num+1):
         data_l[r_num - 1][0] = config.div
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 'FFF5F2DD':
+        """Color index should be checked prior to using it in next condition: could be decimal or hex 
+        in different files"""
+        # print(sheet.cell(r_num, 2).fill.start_color.index)
+        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 28: # 'FFF5F2DD'
             subdiv_name_prev = str(sheet.cell(r_num, 1).value).strip()
-            data_l[r_num - 1][1] = str(sheet.cell(r_num, 1).value).strip()
+            # data_l[r_num - 1][1] = str(sheet.cell(r_num, 1).value).strip()
+            data_l[r_num - 1][1] = subdiv_name_prev
             # client_class_name_prev = None
             # name_prev = None
             # inv_prev = None
@@ -50,7 +54,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
         else:
             data_l[r_num - 1][1] = subdiv_name_prev
 
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 'FFFFFFFF':
+        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 9: # 'FFFFFFFF'
             client_class_name_prev = str(sheet.cell(r_num, 1).value).strip()
             data_l[r_num - 1][2] = str(sheet.cell(r_num, 1).value).strip()
             # name_prev = None
@@ -67,11 +71,12 @@ def process_xlsx(data_open_path, data_workbook_num=0):
 
         if sheet.cell(r_num, 2).value is not None:
             data_l[r_num - 1][3] = sheet.cell(r_num, 1).value.strip() #name
+            '''Keeping original inventory number format with leading zeros'''
             data_l[r_num - 1][4] = '0'
             for i in range(9 - 1 - len(str(sheet.cell(r_num, 2).value).strip())):
                 data_l[r_num - 1][4] += '0'
-            data_l[r_num - 1][4] += str(sheet.cell(r_num, 2).value).strip()
-            # data_l[r_num - 1][4] = str(sheet.cell(r_num, 2).value).strip() # inv - KEEP ZEROS
+            data_l[r_num - 1][4] += str(sheet.cell(r_num, 2).value).strip() # inv
+
             # data_l[r_num - 1][5] = str(sheet.cell(r_num, 3).value).strip()  # OKOF
             # data_l[r_num - 1][6] = str(sheet.cell(r_num, 6).value).strip()  # subdiv_name
             # data_l[r_num - 1][7] = str(sheet.cell(r_num, 7).value).strip()  # subdiv
