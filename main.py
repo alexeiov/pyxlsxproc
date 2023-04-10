@@ -1,8 +1,8 @@
-import xlsx_proc
+import xlsx_proc_color
 
 
 def main():
-    xlsx_proc
+    xlsx_proc_color
 
 
 main()

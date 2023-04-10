@@ -1,3 +1,5 @@
+"""this module uses cell tab as mark"""
+# но сработало и без модификации под отступы, только с цветом, с интесмо, только немного надо эксель руками отредактировать, что быстрее, чем править код.
 import openpyxl as opx
 import datetime
 from pathlib import Path
@@ -37,7 +39,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
         """Color index should be checked prior to using it in next condition: could be decimal or hex 
         in different files"""
         # print(sheet.cell(r_num, 2).fill.start_color.index)
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 28: # 'FFF5F2DD'
+        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 28:  # 'FFF5F2DD'
             subdiv_name_prev = str(sheet.cell(r_num, 1).value).strip()
             # data_l[r_num - 1][1] = str(sheet.cell(r_num, 1).value).strip()
             data_l[r_num - 1][1] = subdiv_name_prev
@@ -54,7 +56,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
         else:
             data_l[r_num - 1][1] = subdiv_name_prev
 
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 9: # 'FFFFFFFF'
+        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 9:  # 'FFFFFFFF'
             client_class_name_prev = str(sheet.cell(r_num, 1).value).strip()
             data_l[r_num - 1][2] = str(sheet.cell(r_num, 1).value).strip()
             # name_prev = None
@@ -70,7 +72,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
             data_l[r_num - 1][2] = client_class_name_prev
 
         if sheet.cell(r_num, 2).value is not None:
-            data_l[r_num - 1][3] = sheet.cell(r_num, 1).value.strip() #name
+            data_l[r_num - 1][3] = sheet.cell(r_num, 1).value.strip()  # name
             '''Keeping original inventory number format with leading zeros'''
             data_l[r_num - 1][4] = '0'
             for i in range(9 - 1 - len(str(sheet.cell(r_num, 2).value).strip())):
@@ -89,7 +91,9 @@ def process_xlsx(data_open_path, data_workbook_num=0):
             data_l[r_num - 1][6] = str(sheet.cell(r_num, 4).value).strip()  # titul
             data_l[r_num - 1][7] = str(sheet.cell(r_num, 5).value).strip()  # GBV
             # data_l[r_num - 1][16] = str(sheet.cell(r_num, 16).value).strip()  # acc_dep
-            data_l[r_num - 1][8] = str(sheet.cell(r_num, 6).value).strip()  # NBV
+            data_l[r_num - 1][8] = str(sheet.cell(r_num, 7).value).strip()  # NBV
+            data_l[r_num - 1][9] = str(sheet.cell(r_num, 9).value).strip()
+            data_l[r_num - 1][10] = str(sheet.cell(r_num, 10).value).strip()
 
     return data_l
 
@@ -105,10 +109,10 @@ def save_results_to_xlsx(results, save_path):
     sheet['E1'] = 'inv'
     sheet['F1'] = 'date_in'
     sheet['G1'] = 'TITUL'
-    sheet['H1'] = 'GBV'
-    sheet['I1'] = 'NBV'
-    # sheet['J1'] = 'date_in'
-    # sheet['K1'] = 'HC_SIGN'
+    sheet['H1'] = 'OKOF'
+    sheet['I1'] = 'sign'
+    sheet['J1'] = 'GBV'
+    sheet['K1'] = 'NBV'
     # sheet['L1'] = 'currency'
     # sheet['M1'] = 'OKOF_OLD'
     # sheet['N1'] = 'CLIENT_CL_NAME'
