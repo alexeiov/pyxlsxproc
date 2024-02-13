@@ -1,12 +1,12 @@
 """this module uses cell tab as mark"""
-# но сработало и без модификации под отступы, только с цветом, с интесмо, только немного надо эксель руками отредактировать, что быстрее, чем править код.
+# но сработало и без модификации под отступы, только с цветом, с интесмо, только немного надо эксель руками отредактировать, что быстрее, чем править код
 import openpyxl as opx
 import datetime
 from pathlib import Path
 import config
 
 open_path = input('Enter path to file:')
-file_to_process = input('Enter filename:')
+file_to_process = input('Enter filename:') + ".xlsm"  # file extension here to be changes according to actual file. Done this since rename in Win selects only name but no extension so this is quicker
 result_file = file_to_process[:-5] + '_to_db_' + datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + '.xlsx'
 result_file_1 = file_to_process[:-5] + '_to_db_' + datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + '.txt'
 
@@ -30,16 +30,17 @@ def process_xlsx(data_open_path, data_workbook_num=0):
 
     """Variables below to be changed dependant on the structure of the data processed"""
 
+    # below are data sections titles (rows were only one cell is filled and no other data presented) which are going to be detected using indent values
     client_class_name_prev = None
     subdiv_name_prev = None
     # name_prev = None
 
     for r_num in range(1, row_num+1):
-        data_l[r_num - 1][0] = config.div
-        """Color index should be checked prior to using it in next condition: could be decimal or hex 
-        in different files"""
+        data_l[r_num - 1][0] = config.div  # this fills 'div' column of main_tab
+
         # print(sheet.cell(r_num, 2).fill.start_color.index)
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 28:  # 'FFF5F2DD'
+
+        if not int(sheet.cell(r_num, 1).alignment.indent):  # starting index of rows and columns is 1
             subdiv_name_prev = str(sheet.cell(r_num, 1).value).strip()
             # data_l[r_num - 1][1] = str(sheet.cell(r_num, 1).value).strip()
             data_l[r_num - 1][1] = subdiv_name_prev
@@ -56,7 +57,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
         else:
             data_l[r_num - 1][1] = subdiv_name_prev
 
-        if sheet.cell(r_num, 2).value is None and sheet.cell(r_num, 2).fill.start_color.index == 9:  # 'FFFFFFFF'
+        if int(sheet.cell(r_num, 1).alignment.indent) == 1:
             client_class_name_prev = str(sheet.cell(r_num, 1).value).strip()
             data_l[r_num - 1][2] = str(sheet.cell(r_num, 1).value).strip()
             # name_prev = None
@@ -77,7 +78,9 @@ def process_xlsx(data_open_path, data_workbook_num=0):
             data_l[r_num - 1][4] = '0'
             for i in range(9 - 1 - len(str(sheet.cell(r_num, 2).value).strip())):
                 data_l[r_num - 1][4] += '0'
-            data_l[r_num - 1][4] += str(sheet.cell(r_num, 2).value).strip() # inv
+            data_l[r_num - 1][4] += str(sheet.cell(r_num, 2).value).strip()  # inv
+
+            """ below columns to be adjusted(change 2nd index) according to the structure of the worksheet processed """
 
             # data_l[r_num - 1][5] = str(sheet.cell(r_num, 3).value).strip()  # OKOF
             # data_l[r_num - 1][6] = str(sheet.cell(r_num, 6).value).strip()  # subdiv_name
@@ -91,7 +94,7 @@ def process_xlsx(data_open_path, data_workbook_num=0):
             data_l[r_num - 1][6] = str(sheet.cell(r_num, 4).value).strip()  # titul
             data_l[r_num - 1][7] = str(sheet.cell(r_num, 5).value).strip()  # GBV
             # data_l[r_num - 1][16] = str(sheet.cell(r_num, 16).value).strip()  # acc_dep
-            data_l[r_num - 1][8] = str(sheet.cell(r_num, 7).value).strip()  # NBV
+            data_l[r_num - 1][8] = str(sheet.cell(r_num, 6).value).strip()  # NBV
             data_l[r_num - 1][9] = str(sheet.cell(r_num, 9).value).strip()
             data_l[r_num - 1][10] = str(sheet.cell(r_num, 10).value).strip()
 
@@ -102,6 +105,7 @@ def save_results_to_xlsx(results, save_path):
     wb = opx.Workbook()
     sheet = wb.worksheets[0]
     sheet.title = 'data_to_db'
+    # below column names to be adjusted according to original xlsx worksheet structure
     sheet['A1'] = 'div'
     sheet['B1'] = 'subdiv_name'
     sheet['C1'] = 'client_cl_name'
@@ -109,12 +113,12 @@ def save_results_to_xlsx(results, save_path):
     sheet['E1'] = 'inv'
     sheet['F1'] = 'date_in'
     sheet['G1'] = 'TITUL'
-    sheet['H1'] = 'OKOF'
-    sheet['I1'] = 'sign'
-    sheet['J1'] = 'GBV'
-    sheet['K1'] = 'NBV'
-    # sheet['L1'] = 'currency'
-    # sheet['M1'] = 'OKOF_OLD'
+    sheet['H1'] = 'GBV'
+    sheet['I1'] = 'NBV'
+    sheet['J1'] = 'reason'
+    sheet['K1'] = 'color_code'
+    # sheet['L1'] = 'reason'
+    # sheet['M1'] = 'color_code'
     # sheet['N1'] = 'CLIENT_CL_NAME'
     # sheet['O1'] = 'STATUS'
     # sheet['P1'] = 'GBV'
